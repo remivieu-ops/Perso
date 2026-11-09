@@ -1,0 +1,251 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Calculette Cabinet Kiné</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout : colonne de saisie à gauche, synthèse collante à droite ; une seule colonne sur téléphone */
+:root{
+  --bg:#f3f6f5; --surface:#ffffff; --fg:#14211f; --muted:#5b6d69; --line:#d8e2df;
+  --accent:#0f6b63; --accent-soft:#e1f0ed; --warn:#a4561a; --bar:#0f6b63; --bar-bg:#e6edeb;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1716; --surface:#16211f; --fg:#e4efec; --muted:#93a8a3; --line:#2a3a37;
+  --accent:#5cc7b8; --accent-soft:#1d3532; --warn:#e3a56e; --bar:#5cc7b8; --bar-bg:#24332f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1716; --surface:#16211f; --fg:#e4efec; --muted:#93a8a3; --line:#2a3a37;
+  --accent:#5cc7b8; --accent-soft:#1d3532; --warn:#e3a56e; --bar:#5cc7b8; --bar-bg:#24332f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header h1{font-family:var(--display);font-size:clamp(26px,4vw,38px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+header p{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;margin-top:24px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+h2{font-family:var(--display);font-size:19px;margin:0 0 4px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;font-weight:500}
+input,select{font:inherit;font-family:var(--mono);font-size:15px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+input[type=text]{font-family:var(--body)}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.days{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:14px}
+@media (max-width:480px){.days{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.days input{text-align:center}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;text-align:left;padding:6px 6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.num{font-family:var(--mono);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+button{font:inherit;cursor:pointer;border-radius:6px}
+.btn{background:var(--accent);color:var(--surface);border:0;padding:8px 14px;font-weight:600}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--fg);padding:6px 10px}
+.del{background:transparent;border:0;color:var(--muted);font-size:18px;padding:2px 8px}
+.del:hover{color:var(--warn)}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.summary{position:sticky;top:max(16px,env(safe-area-inset-top,0px))}
+.big{font-family:var(--display);font-size:40px;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.big small{font-size:15px;color:var(--muted);font-family:var(--body);letter-spacing:0}
+.lines{margin:16px 0 0;display:flex;flex-direction:column}
+.line{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line)}
+.line span:last-child{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.line.total{font-weight:600;border-top:2px solid var(--fg)}
+.line.minus span:last-child{color:var(--warn)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.kpi{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted)}
+.rank{display:flex;flex-direction:column;gap:10px}
+.rk{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 80px;gap:10px;align-items:center;font-size:14px}
+.rk .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk .bar{height:12px;background:var(--bar-bg);border-radius:3px;overflow:hidden}
+.rk .bar i{display:block;height:100%;background:var(--bar)}
+.rk .v{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.alert{margin-top:12px;padding:10px 12px;border-radius:8px;border:1px solid var(--warn);color:var(--warn);font-size:13px}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+.ex{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:99px;margin-left:8px;vertical-align:middle;font-family:var(--body);font-weight:600}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Calculette Cabinet Kiné <span class="ex">Valeurs d'exemple</span></h1>
+  <p>Remplis ta semaine type et tes activités : la calculette donne le chiffre d'affaires du mois, ce qu'il te reste après redevance et cotisations, et quelle activité rapporte le plus par heure.</p>
+</header>
+
+<div class="grid">
+<div class="col">
+
+  <section>
+    <h2>1. Séances classiques</h2>
+    <p class="hint">Le cœur de l'activité : nombre de patients vus chaque jour en séance individuelle.</p>
+    <div class="fields">
+      <div><label for="mainPrice">Prix d'une séance (€)</label><input id="mainPrice" type="number" step="0.01" min="0" value="18"></div>
+      <div><label for="mainMin">Durée par patient (min)</label><input id="mainMin" type="number" min="1" value="30"></div>
+    </div>
+    <div class="days" id="days"></div>
+  </section>
+
+  <section>
+    <h2>2. Activités en plus</h2>
+    <p class="hint">Balnéo en groupe, actes hors nomenclature, bilans… Un créneau peut accueillir plusieurs patients en même temps.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr>
+          <th>Activité</th><th>Prix / patient (€)</th><th>Patients / créneau</th><th>Durée créneau (min)</th><th>Créneaux / semaine</th><th style="text-align:right">€ / heure</th><th style="text-align:right">€ / mois</th><th></th>
+        </tr></thead>
+        <tbody id="acts"></tbody>
+      </table>
+    </div>
+    <div class="row-actions">
+      <button class="btn" id="addAct" type="button">Ajouter une activité</button>
+      <button class="ghost" id="addBalneo" type="button">+ Balnéo 4 patients</button>
+      <button class="ghost" id="addHN" type="button">+ Séance hors nomenclature</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Paramètres du mois</h2>
+    <div class="fields">
+      <div><label for="weeks">Semaines travaillées / mois</label><input id="weeks" type="number" step="0.1" min="0" value="4.2"></div>
+      <div><label for="redev">Redevance (%)</label><input id="redev" type="number" step="0.5" min="0" value="20"></div>
+      <div><label for="tva">TVA sur redevance</label><select id="tva"><option value="0">Non</option><option value="20">Oui, 20 %</option></select></div>
+      <div><label for="cotis">Cotisations estimées (% du CA)</label><input id="cotis" type="number" step="0.5" min="0" value="20"></div>
+      <div><label for="maxH">Heures max / semaine</label><input id="maxH" type="number" min="1" value="45"></div>
+    </div>
+    <p class="note">Une semaine travaillée moyenne de 4,2 correspond à environ 5 semaines de congés par an. Les cotisations (URSSAF + CARPIMKO) sont une estimation : environ 20 % des recettes au rythme de croisière, un peu plus sur les actes hors nomenclature.</p>
+  </section>
+
+  <section>
+    <h2>Rentabilité par heure</h2>
+    <p class="hint">Ce que chaque activité rapporte pour une heure de ton temps. C'est le bon critère quand ton agenda est plein.</p>
+    <div class="rank" id="rank"></div>
+  </section>
+
+</div>
+
+<aside class="summary">
+  <section>
+    <label>Chiffre d'affaires du mois</label>
+    <div class="big" id="caMonth">0 €</div>
+    <div class="lines">
+      <div class="line"><span>Séances classiques</span><span id="lMain">0 €</span></div>
+      <div class="line"><span>Activités en plus</span><span id="lActs">0 €</span></div>
+      <div class="line minus"><span>Redevance au titulaire</span><span id="lRedev">0 €</span></div>
+      <div class="line minus"><span>Cotisations estimées</span><span id="lCotis">0 €</span></div>
+      <div class="line total"><span>Reste avant impôt</span><span id="lNet">0 €</span></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b id="kHours">0 h</b><span>de soins / semaine</span></div>
+      <div class="kpi"><b id="kPatients">0</b><span>patients / semaine</span></div>
+      <div class="kpi"><b id="kHourly">0 €</b><span>CA moyen / heure</span></div>
+      <div class="kpi"><b id="kNetHour">0 €</b><span>reste / heure</span></div>
+    </div>
+    <div class="alert" id="alert" hidden></div>
+    <div class="row-actions"><button class="ghost" id="reset" type="button">Remettre les exemples</button></div>
+    <p class="note">Estimation indicative, hors impôt sur le revenu et hors frais (voiture, assurance, Ordre). Tes saisies restent enregistrées dans ce navigateur.</p>
+  </section>
+</aside>
+</div>
+</div>
+
+<script>
+(function(){
+  var DAYS=["Lun","Mar","Mer","Jeu","Ven","Sam"];
+  var DEFAULTS={mainPrice:18,mainMin:30,days:[14,14,12,14,14,0],weeks:4.2,redev:20,tva:"0",cotis:20,maxH:45,
+    acts:[{name:"Balnéo (groupe de 4)",price:18,pat:4,min:45,slots:2},{name:"Séance hors nomenclature",price:45,pat:1,min:45,slots:2}]};
+  var KEY="calc-kine-v1", state;
+  function load(){try{var s=localStorage.getItem(KEY);if(s)return JSON.parse(s);}catch(e){}return JSON.parse(JSON.stringify(DEFAULTS));}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  state=load();
+  var eur=new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+  var num=function(v){v=parseFloat(String(v).replace(",","."));return isFinite(v)&&v>0?v:0;};
+  var $=function(id){return document.getElementById(id);};
+
+  function renderDays(){
+    $("days").innerHTML=DAYS.map(function(d,i){return '<div><label for="d'+i+'">'+d+'</label><input id="d'+i+'" data-day="'+i+'" type="number" min="0" value="'+(state.days[i]||0)+'"></div>';}).join("");
+  }
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function renderActs(){
+    $("acts").innerHTML=state.acts.map(function(a,i){
+      return '<tr data-i="'+i+'">'+
+        '<td><input type="text" id="an'+i+'" data-k="name" value="'+esc(a.name)+'" aria-label="Nom de l\'activité"></td>'+
+        '<td><input type="number" id="ap'+i+'" data-k="price" step="0.01" min="0" value="'+a.price+'" aria-label="Prix par patient"></td>'+
+        '<td><input type="number" id="aq'+i+'" data-k="pat" min="1" value="'+a.pat+'" aria-label="Patients par créneau"></td>'+
+        '<td><input type="number" id="am'+i+'" data-k="min" min="1" value="'+a.min+'" aria-label="Durée du créneau"></td>'+
+        '<td><input type="number" id="as'+i+'" data-k="slots" min="0" value="'+a.slots+'" aria-label="Créneaux par semaine"></td>'+
+        '<td class="num" data-out="h">–</td><td class="num" data-out="m">–</td>'+
+        '<td><button class="del" type="button" data-del="'+i+'" aria-label="Supprimer">×</button></td></tr>';
+    }).join("");
+  }
+  function readInputs(){
+    ["mainPrice","mainMin","weeks","redev","cotis","maxH"].forEach(function(k){state[k]=$(k).value;});
+    state.tva=$("tva").value;
+    DAYS.forEach(function(_,i){state.days[i]=$("d"+i).value;});
+  }
+  function compute(){
+    var w=num(state.weeks), price=num(state.mainPrice), mm=num(state.mainMin);
+    var pWeek=state.days.reduce(function(s,v){return s+num(v);},0);
+    var mainWeekCA=pWeek*price, mainWeekH=pWeek*mm/60;
+    var rows=[{name:"Séances classiques",hourly:mm?price*60/mm:0,month:mainWeekCA*w}];
+    var actsWeekCA=0, actsWeekH=0, actsPat=0;
+    var trs=$("acts").querySelectorAll("tr");
+    state.acts.forEach(function(a,i){
+      var ca=num(a.price)*num(a.pat)*num(a.slots), h=num(a.min)*num(a.slots)/60;
+      var hourly=num(a.min)?num(a.price)*num(a.pat)*60/num(a.min):0;
+      actsWeekCA+=ca; actsWeekH+=h; actsPat+=num(a.pat)*num(a.slots);
+      rows.push({name:a.name||"Activité",hourly:hourly,month:ca*w});
+      if(trs[i]){trs[i].querySelector('[data-out="h"]').textContent=eur.format(hourly);trs[i].querySelector('[data-out="m"]').textContent=eur.format(ca*w);}
+    });
+    var caMain=mainWeekCA*w, caActs=actsWeekCA*w, ca=caMain+caActs;
+    var redev=ca*num(state.redev)/100*(1+num(state.tva)/100);
+    var cotis=ca*num(state.cotis)/100, net=ca-redev-cotis;
+    var hWeek=mainWeekH+actsWeekH, hMonth=hWeek*w;
+    $("caMonth").innerHTML=eur.format(ca)+' <small>/ mois</small>';
+    $("lMain").textContent=eur.format(caMain);
+    $("lActs").textContent=eur.format(caActs);
+    $("lRedev").textContent="− "+eur.format(redev);
+    $("lCotis").textContent="− "+eur.format(cotis);
+    $("lNet").textContent=eur.format(net);
+    $("kHours").textContent=(Math.round(hWeek*10)/10).toLocaleString("fr-FR")+" h";
+    $("kPatients").textContent=Math.round(pWeek+actsPat);
+    $("kHourly").textContent=eur.format(hMonth?ca/hMonth:0);
+    $("kNetHour").textContent=eur.format(hMonth?net/hMonth:0);
+    var al=$("alert"), maxH=num(state.maxH);
+    if(maxH&&hWeek>maxH){al.hidden=false;al.textContent="Ta semaine type fait "+(Math.round(hWeek*10)/10).toLocaleString("fr-FR")+" h de soins, au-dessus de ton maximum de "+maxH+" h. Remplace plutôt des créneaux peu rentables que d'en ajouter.";}
+    else al.hidden=true;
+    rows.sort(function(a,b){return b.hourly-a.hourly;});
+    var max=rows.reduce(function(m,r){return Math.max(m,r.hourly);},0)||1;
+    $("rank").innerHTML=rows.map(function(r){
+      return '<div class="rk"><span class="nm" title="'+esc(r.name)+'">'+esc(r.name)+'</span><span class="bar"><i style="width:'+(r.hourly/max*100).toFixed(1)+'%"></i></span><span class="v">'+eur.format(r.hourly)+'/h</span></div>';
+    }).join("");
+    save();
+  }
+  function fillParams(){
+    ["mainPrice","mainMin","weeks","redev","cotis","maxH"].forEach(function(k){$(k).value=state[k];});
+    $("tva").value=state.tva;
+  }
+  function all(){fillParams();renderDays();renderActs();compute();}
+
+  document.addEventListener("input",function(e){
+    var t=e.target, tr=t.closest&&t.closest("#acts tr");
+    if(tr){state.acts[+tr.dataset.i][t.dataset.k]=t.value;}
+    else readInputs();
+    compute();
+  });
+  document.addEventListener("change",function(e){if(e.target.id==="tva"){readInputs();compute();}});
+  $("acts").addEventListener("click",function(e){var d=e.target.dataset.del;if(d!==undefined){state.acts.splice(+d,1);renderActs();compute();}});
+  function add(a){state.acts.push(a);renderActs();compute();}
+  $("addAct").onclick=function(){add({name:"Nouvelle activité",price:20,pat:1,min:30,slots:1});};
+  $("addBalneo").onclick=function(){add({name:"Balnéo (groupe de 4)",price:18,pat:4,min:45,slots:1});};
+  $("addHN").onclick=function(){add({name:"Séance hors nomenclature",price:45,pat:1,min:45,slots:1});};
+  $("reset").onclick=function(){state=JSON.parse(JSON.stringify(DEFAULTS));all();};
+  all();
+})();
+</script>
+
+</body></html>
